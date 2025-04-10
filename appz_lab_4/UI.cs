@@ -1,17 +1,19 @@
 ﻿using System;
+using System.Linq;
 using BLL;
+using BLL.Exceptions;
 using BLL.ModelsService;
 
 namespace appz_lab_4
 {
     internal class UI
     {
-        StorageService storageService;
-        ContentService contentService;
-        BookService bookService;
-        VideoService videoService;
-        AudioService audioService;
-        DocumentService documentService;
+        private readonly StorageService storageService;
+        private readonly ContentService contentService;
+        private readonly BookService bookService;
+        private readonly VideoService videoService;
+        private readonly AudioService audioService;
+        private readonly DocumentService documentService;
 
         public UI()
         {
@@ -35,109 +37,28 @@ namespace appz_lab_4
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        Console.WriteLine("1. Додати до бібліотеки");
-                        Console.WriteLine("2. Отримати все");
-                        Console.WriteLine("3. Отримати за назвою");
-                        Console.WriteLine("4. Оновити сховище");
+                        Console.WriteLine("1. Додати контент");
+                        Console.WriteLine("2. Отримати весь контент");
+                        Console.WriteLine("3. Отримати контент за айді");
+                        Console.WriteLine("4. Змінити сховище контенту");
                         Console.WriteLine("5. Видалити контент");
 
                         switch (Console.ReadLine())
                         {
                             case "1":
-                                ShowContentOptions();
-
-                                switch (Console.ReadLine())
-                                {
-                                    case "1":
-                                        AddContent(ContentType.Book);
-                                        break;
-                                    case "2":
-                                        AddContent(ContentType.Video);
-                                        break;
-                                    case "3":
-                                        AddContent(ContentType.Audio);
-                                        break;
-                                    case "4":
-                                        AddContent(ContentType.Document);
-                                        break;
-                                    default:
-                                        Console.WriteLine("Некоректний ввод");
-                                        break;
-                                }
+                                AddContent(AskContentType());
                                 break;
                             case "2":
-                                ShowContentOptions();
-                                switch (Console.ReadLine())
-                                {
-                                    case "1":
-                                        GetAllContents(ContentType.Book);
-                                        break;
-                                    case "2":
-                                        GetAllContents(ContentType.Video);
-                                        break;
-                                    case "3":
-                                        GetAllContents(ContentType.Audio);
-                                        break;
-                                    case "4":
-                                        GetAllContents(ContentType.Document);
-                                        break;
-                                    default:
-                                        Console.WriteLine("Некоректний ввод");
-                                        break;
-                                }
+                                GetAllContents();
                                 break;
                             case "3":
-                                ShowContentOptions();
-                                switch (Console.ReadLine())
-                                {
-                                    case "1":
-                                        GetContent(ContentType.Book);
-                                        break;
-                                    case "2":
-                                        GetContent(ContentType.Video);
-                                        break;
-                                    case "3":
-                                        GetContent(ContentType.Audio);
-                                        break;
-                                    case "4":
-                                        GetContent(ContentType.Document);
-                                        break;
-                                    default:
-                                        Console.WriteLine("Некоректний ввод");
-                                        break;
-                                }
+                                GetContent(AskContentType());
                                 break;
                             case "4":
-                                try
-                                {
-                                    Console.WriteLine("Введіть назву контенту: ");
-                                    string title = Console.ReadLine();
-
-                                    Console.WriteLine("Введіть айді нового сховища: ");
-                                    if (!int.TryParse(Console.ReadLine(), out int newStorageId) || newStorageId <= 0)
-                                    {
-                                        Console.WriteLine("Некортектний ввод. Введіть число більше за 0.");
-                                        continue;
-                                    }
-                                    contentService.UpdateContentStorage(title, newStorageId);
-                                    Console.WriteLine("Контент успішно оновлено");
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine("Помилка: " + ex.Message);
-                                }
+                                UpdateContent();
                                 break;
                             case "5":
-                                try
-                                {
-                                    Console.WriteLine("Введіть назву контенту: ");
-                                    contentService.DeleteContent(Console.ReadLine());
-                                    Console.WriteLine("Контент успішно видалено");
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine("Помилка: " + ex.Message);
-                                }
+                                DeleteContent();
                                 break;
                             default:
                                 Console.WriteLine("Некоректний ввод");
@@ -145,11 +66,11 @@ namespace appz_lab_4
                         }
                         break;
                     case "2":
-                        Console.WriteLine("1. Додати");
-                        Console.WriteLine("2. Отримати все");
-                        Console.WriteLine("3. Отримати за назвою");
-                        Console.WriteLine("4. Оновити дані");
-                        Console.WriteLine("5. Видалити");
+                        Console.WriteLine("1. Додати сховище");
+                        Console.WriteLine("2. Отримати всі сховища");
+                        Console.WriteLine("3. Отримати сховище за айді");
+                        Console.WriteLine("4. Оновити дані сховища");
+                        Console.WriteLine("5. Видалити сховище");
                         switch (Console.ReadLine())
                         {
                             case "1":
@@ -159,7 +80,7 @@ namespace appz_lab_4
                                 GetAllStorages();
                                 break;
                             case "3":
-                                GetStorageByName();
+                                GetStorageById();
                                 break;
                             case "4":
                                 UpdateStorageData();
@@ -189,247 +110,272 @@ namespace appz_lab_4
             Video
         }
 
-        private static void ShowContentOptions()
+        private ContentType AskContentType()
         {
-            Console.WriteLine("Виберіть тип контенту: ");
-            Console.WriteLine("1. Книги");
-            Console.WriteLine("2. Відео");
-            Console.WriteLine("3. Аудіо");
-            Console.WriteLine("4. Документ");
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Виберіть тип контенту:");
+                    Console.WriteLine("1. Книга");
+                    Console.WriteLine("2. Відео");
+                    Console.WriteLine("3. Аудіо");
+                    Console.WriteLine("4. Документ");
+
+                    switch (Console.ReadLine())
+                    {
+                        case "1": return ContentType.Book;
+                        case "2": return ContentType.Video;
+                        case "3": return ContentType.Audio;
+                        case "4": return ContentType.Document;
+                        default: throw new ArgumentException("Невірний тип контенту");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Помилка: " + ex.Message);
+
+                }
+            }
         }
 
         private void AddContent(ContentType type)
         {
-            switch (type)
+            try
             {
-                case ContentType.Book:
-                    Console.WriteLine("Введіть назву: ");
-                    string bookTitle = Console.ReadLine();
+                Console.WriteLine("Введіть назву: ");
+                string title = Console.ReadLine();
 
-                    Console.WriteLine("Введіть формат: ");
-                    string bookFormat = Console.ReadLine();
+                Console.WriteLine("Введіть формат: ");
+                string format = Console.ReadLine();
 
-                    Console.WriteLine("Введіть назву сховища: ");
-                    var bookStorage = storageService.GetStorageByName(Console.ReadLine());
+                Console.WriteLine("Введіть айді сховища: ");
+                int storageId = GetIntType(Console.ReadLine());
 
-                    if (bookStorage == null)
-                    {
-                        Console.WriteLine("Сховища не існує. Спочатку додайте його.");
+                var storage = storageService.GetById(storageId);
+
+                if (storage == null)
+                {
+                    throw new StorageNotFoundException();
+                }
+
+                switch (type)
+                {
+                    case ContentType.Book:
+                        Console.WriteLine("Введіть ім'я автора: ");
+                        string author = Console.ReadLine();
+
+                        Console.WriteLine("Введіть кількість сторінок: ");
+                        int pageCount = GetIntType(Console.ReadLine());
+
+                        bookService.AddBook(title, format, storageId, author, pageCount);
+                        Console.WriteLine("Книгу успішно додано");
                         break;
-                    }
 
-                    Console.WriteLine("Введіть ім'я автора: ");
-                    string author = Console.ReadLine();
+                    case ContentType.Video:
+                        Console.WriteLine("Введіть довжину відео (в секундах): ");
+                        int duration = GetIntType(Console.ReadLine());
 
-                    Console.WriteLine("Введіть кількість сторінок: ");
-                    if (!int.TryParse(Console.ReadLine(), out int pageCount) || pageCount <= 0)
-                    {
-                        Console.WriteLine("Некортектний ввод. Введіть число більше за 0.");
+                        Console.WriteLine("Введіть розширення відео: ");
+                        string resolution = Console.ReadLine();
+
+                        videoService.AddVideo(title, format, storageId, duration, resolution);
+                        Console.WriteLine("Відео успішно додано");
                         break;
-                    }
 
-                    bookService.AddBook(bookTitle, bookFormat, bookStorage.StorageId, author, pageCount);
-                    Console.WriteLine("Книгу успішно додано");
-                    break;
-                case ContentType.Video:
-                    Console.WriteLine("Введіть назву: ");
-                    string videoTitle = Console.ReadLine();
+                    case ContentType.Audio:
+                        Console.WriteLine("Введіть бітрейт аудіо: ");
+                        int bitRate = GetIntType(Console.ReadLine());
 
-                    Console.WriteLine("Введіть формат: ");
-                    string videoFormat = Console.ReadLine();
+                        Console.WriteLine("Введіть кількість каналів аудіо: ");
+                        int channels = GetIntType(Console.ReadLine());
 
-                    Console.WriteLine("Введіть назву сховища: ");
-                    var videoStorage = storageService.GetStorageByName(Console.ReadLine());
-
-                    if (videoStorage == null)
-                    {
-                        Console.WriteLine("Сховища не існує. Спочатку додайте його.");
+                        audioService.AddAudio(title, format, storageId, bitRate, channels);
+                        Console.WriteLine("Аудіо успішно додано");
                         break;
-                    }
 
-                    Console.WriteLine("Введіть довжину відео (в секундах): ");
-                    if (!int.TryParse(Console.ReadLine(), out int duration) || duration <= 0)
-                    {
-                        Console.WriteLine("Некортектний ввод. Введіть число більше за 0.");
+                    case ContentType.Document:
+                        DateTime creationDate = DateTime.Now;
+
+                        Console.WriteLine("Введіть шлях до файлу: ");
+                        string filePath = Console.ReadLine();
+
+                        documentService.AddDocument(title, format, storageId, creationDate, filePath);
+                        Console.WriteLine("Документ успішно додано");
                         break;
-                    }
-
-                    Console.WriteLine("Введіть розширення відео: ");
-                    string resolution = Console.ReadLine();
-
-                    videoService.AddVideo(videoTitle, videoFormat, videoStorage.StorageId, duration, resolution);
-                    Console.WriteLine("Відео успішно додано");
-                    break;
-
-                case ContentType.Audio:
-                    Console.WriteLine("Введіть назву: ");
-                    string audioTitle = Console.ReadLine();
-
-                    Console.WriteLine("Введіть формат: ");
-                    string audioFormat = Console.ReadLine();
-
-                    Console.WriteLine("Введіть назву сховища: ");
-                    var audioStorage = storageService.GetStorageByName(Console.ReadLine());
-
-                    if (audioStorage == null)
-                    {
-                        Console.WriteLine("Сховища не існує. Спочатку додайте його.");
-                        break;
-                    }
-
-                    Console.WriteLine("Введіть бітрейт аудіо: ");
-                    if (!int.TryParse(Console.ReadLine(), out int bitRate) || bitRate <= 0)
-                    {
-                        Console.WriteLine("Некоректний ввід. Введіть число більше за 0.");
-                        break;
-                    }
-
-                    Console.WriteLine("Введіть кількість каналів аудіо: ");
-                    if (!int.TryParse(Console.ReadLine(), out int channels) || channels <= 0)
-                    {
-                        Console.WriteLine("Некоректний ввід. Введіть число більше за 0.");
-                        break;
-                    }
-
-                    audioService.AddAudio(audioTitle, audioFormat, audioStorage.StorageId, bitRate, channels);
-                    Console.WriteLine("Аудіо успішно додано");
-                    break;
-
-                case ContentType.Document:
-                    Console.WriteLine("Введіть назву: ");
-                    string documentTitle = Console.ReadLine();
-
-                    Console.WriteLine("Введіть формат: ");
-                    string documentFormat = Console.ReadLine();
-
-                    Console.WriteLine("Введіть назву сховища: ");
-                    var documentStorage = storageService.GetStorageByName(Console.ReadLine());
-
-                    if (documentStorage == null)
-                    {
-                        Console.WriteLine("Сховища не існує. Спочатку додайте його.");
-                        break;
-                    }
-
-                    DateTime creationDate = DateTime.Now;
-
-                    Console.WriteLine("Введіть шлях до файлу: ");
-                    string filePath = Console.ReadLine();
-
-                    documentService.AddDocument(documentTitle, documentFormat, documentStorage.StorageId, creationDate, filePath);
-                    Console.WriteLine("Документ успішно додано");
-                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Помилка: " + ex.Message);
             }
         }
 
-        private void GetAllContents(ContentType type)
+        private void GetAllContents()
         {
-            switch (type)
+            var books = bookService.GetAllBooks();
+            if (books.Any())
             {
-                case ContentType.Book:
-                    var books = bookService.GetAllBooks();
-                    Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
+                Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                         "Айді", "Назва", "Формат", "Сховище", "Адреса", "Автор", "Стор."));
-                    foreach (var book in books)
-                    {
-                        Console.WriteLine(book);
-                    }
-                    break;
-                case ContentType.Video:
-                    var videos = videoService.GetAllVideos();
-                    Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
-                        "Айді", "Назва", "Формат", "Сховище", "Адреса", "Довжина", "Розширення"));
-                    foreach (var video in videos)
-                    {
-                        Console.WriteLine(video);
-                    }
-                    break;
+                foreach (var book in books)
+                {
+                    Console.WriteLine(book);
+                }
+                Console.WriteLine();
+            }
 
-                case ContentType.Audio:
-                    var audios = audioService.GetAllAudios();
-                    Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
+            var videos = videoService.GetAllVideos();
+            if (videos.Any())
+            {
+                Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
+                "Айді", "Назва", "Формат", "Сховище", "Адреса", "Довжина", "Розширення"));
+                foreach (var video in videos)
+                {
+                    Console.WriteLine(video);
+                }
+                Console.WriteLine();
+            }
+
+            var audios = audioService.GetAllAudios();
+            if (audios.Any())
+            {
+                Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                         "Айді", "Назва", "Формат", "Сховище", "Адреса", "Бітрейт", "Канали"));
-                    foreach (var audio in audios)
-                    {
-                        Console.WriteLine(audio);
-                    }
-                    break;
+                foreach (var audio in audios)
+                {
+                    Console.WriteLine(audio);
+                }
+                Console.WriteLine();
+            }
 
-                case ContentType.Document:
-                    var documents = documentService.GetAllDocuments();
-                    Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
+            var documents = documentService.GetAllDocuments();
+            if (documents.Any())
+            {
+                Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                         "Айді", "Назва", "Формат", "Сховище", "Адреса", "Дата створення", "Шлях до файлу"));
-                    foreach (var document in documents)
-                    {
-                        Console.WriteLine(document);
-                    }
-                    break;
+                foreach (var document in documents)
+                {
+                    Console.WriteLine(document);
+                }
+                Console.WriteLine();
             }
         }
 
         private void GetContent(ContentType type)
         {
-            switch (type)
+            try
             {
-                case ContentType.Book:
-                    Console.WriteLine("Введіть назву книги: ");
-                    var book = bookService.GetBookByTitle(Console.ReadLine());
-                    if (book != null)
-                    {
+                Console.WriteLine("Введіть айді контента: ");
+                int id = GetIntType(Console.ReadLine());
+
+                switch (type)
+                {
+                    case ContentType.Book:
+                        var book = bookService.GetBookById(id);
+                        if (book == null)
+                        {
+                            throw new ContentNotFoundException();
+                        }
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                             "Айді", "Назва", "Формат", "Сховище", "Адреса", "Автор", "Стор."));
                         Console.WriteLine(book);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Книга не знайдена.");
-                    }
-                    break;
+                        break;
 
-                case ContentType.Video:
-                    Console.WriteLine("Введіть назву відео: ");
-                    var video = videoService.GetVideoByTitle(Console.ReadLine());
-                    if (video != null)
-                    {
+                    case ContentType.Video:
+                        var video = videoService.GetVideoById(id);
+                        if (video == null)
+                        {
+                            throw new ContentNotFoundException();
+                        }
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
-                            "Айді", "Назва", "Формат", "Сховище", "Адреса", "Довжина", "Розширення"));
+                        "Айді", "Назва", "Формат", "Сховище", "Адреса", "Довжина", "Розширення"));
                         Console.WriteLine(video);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Відео не знайдено.");
-                    }
-                    break;
+                        break;
 
-                case ContentType.Audio:
-                    Console.WriteLine("Введіть назву аудіо: ");
-                    var audio = audioService.GetAudioByTitle(Console.ReadLine());
-                    if (audio != null)
-                    {
+                    case ContentType.Audio:
+                        var audio = audioService.GetAudioById(id);
+                        if (audio == null)
+                        {
+                            throw new ContentNotFoundException();
+                        }
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
-                            "Айді", "Назва", "Формат", "Сховище", "Адреса", "Бітрейт", "Канали"));
+                        "Айді", "Назва", "Формат", "Сховище", "Адреса", "Бітрейт", "Канали"));
                         Console.WriteLine(audio);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Аудіо не знайдено.");
-                    }
-                    break;
+                        break;
 
-                case ContentType.Document:
-                    Console.WriteLine("Введіть назву документа: ");
-                    var document = documentService.GetDocumentByTitle(Console.ReadLine());
-                    if (document != null)
-                    {
+                    case ContentType.Document:
+                        var document = documentService.GetDocumentById(id);
+                        if (document == null)
+                        {
+                            throw new ContentNotFoundException();
+                        }
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
-                            "Айді", "Назва", "Формат", "Сховище", "Адреса", "Дата створення", "Шлях до файлу"));
+                        "Айді", "Назва", "Формат", "Сховище", "Адреса", "Дата створення", "Шлях до файлу"));
                         Console.WriteLine(document);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Документ не знайдено.");
-                    }
-                    break;
+                        break;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Помилка: " + ex.Message);
+            }
+        }
+
+        private void UpdateContent()
+        {
+            try
+            {
+                Console.WriteLine("Введіть айді контента: ");
+                int contentId = GetIntType(Console.ReadLine());
+
+                var content = contentService.GetById(contentId);
+                if (content == null)
+                {
+                    throw new ContentNotFoundException();
+                }
+
+                Console.WriteLine("Введіть айді нового сховища: ");
+                int storageId = GetIntType(Console.ReadLine());
+
+                var storage = contentService.GetById(storageId);
+                if (storage == null)
+                {
+                    throw new StorageNotFoundException();
+                }
+
+                content.StorageId = storageId;
+                contentService.UpdateContent(content);
+                Console.WriteLine("Сховище контента успішно оновлено");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Помилка: " + ex.Message);
+            }
+        }
+
+        private void DeleteContent()
+        {
+            try
+            {
+                Console.WriteLine("Введіть айді контента: ");
+                int id = GetIntType(Console.ReadLine());
+
+                var content = contentService.GetById(id);
+                if (content == null)
+                {
+                    throw new ContentNotFoundException();
+                }
+
+                contentService.DeleteContent(id);
+
+                Console.WriteLine("Контент успішно видалено");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Помилка: " + ex.Message);
             }
         }
 
@@ -457,28 +403,49 @@ namespace appz_lab_4
             }
         }
 
-        private void GetStorageByName()
+        private void GetStorageById()
         {
-            Console.WriteLine("Введіть назву сховища: ");
-            var storage = storageService.GetStorageByName(Console.ReadLine());
-            Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15}", "Айді", "Назва", "Адресса"));
-            Console.WriteLine(storage);
+            try
+            {
+                Console.WriteLine("Введіть айді сховища: ");
+                int id = GetIntType(Console.ReadLine());
+
+                var storage = storageService.GetById(id);
+
+                if (storage == null)
+                {
+                    throw new StorageNotFoundException();
+                }
+
+                Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15}", "Айді", "Назва", "Адресса"));
+                Console.WriteLine(storage);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Помилка: " + ex.Message);
+            }
         }
 
         private void UpdateStorageData()
         {
             try
             {
-                Console.WriteLine("Введіть назву сховища: ");
-                string name = Console.ReadLine();
+                Console.WriteLine("Введіть айді сховища: ");
+                int id = GetIntType(Console.ReadLine());
+
+                var storage = storageService.GetById(id);
+                if (storage == null)
+                {
+                    throw new StorageNotFoundException();
+                }
 
                 Console.WriteLine("Введіть нову назву сховища: ");
-                string newName = Console.ReadLine();
+                storage.Name = Console.ReadLine();
 
                 Console.WriteLine("Введіть нову адрессу сховища: ");
-                string newAddress = Console.ReadLine();
+                storage.Address = Console.ReadLine();
 
-                storageService.UpdateStorage(name, newName, newAddress);
+                storageService.UpdateStorage(storage);
                 Console.WriteLine("Сховище успішно оновлено");
             }
             catch (Exception ex)
@@ -491,14 +458,32 @@ namespace appz_lab_4
         {
             try
             {
-                Console.WriteLine("Введіть назву сховища: ");
-                storageService.DeleteStorage(Console.ReadLine());
+                Console.WriteLine("Введіть айді сховища: ");
+                int id = GetIntType(Console.ReadLine());
+
+                var storage = storageService.GetById(id);
+                if (storage == null)
+                {
+                    throw new StorageNotFoundException();
+                }
+
+                storageService.DeleteStorage(id);
+
                 Console.WriteLine("Сховище успішно видалено");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Помилка: " + ex.Message);
             }
+        }
+
+        private int GetIntType(string input)
+        {
+            if (!int.TryParse(input, out int id) || id <= 0)
+            {
+                throw new ArgumentException("Некоректний ввод. Введіть число більше за 0.");
+            }
+            return id;
         }
     }
 }

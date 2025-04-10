@@ -1,10 +1,6 @@
-﻿using DAL;
-using DAL.DataModels;
-using System;
+﻿using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.ModelsService
 {
@@ -12,27 +8,34 @@ namespace BLL.ModelsService
     {
         public void AddAudio(string title, string format, int storageId, int bitRate, int channels)
         {
-            var audio = new Audio()
+            Add(new Audio
             {
                 Title = title,
                 Format = format,
                 StorageId = storageId,
                 BitRate = bitRate,
                 Channels = channels
-            };
-
-            _context.Contents.Add(audio);
-            _context.SaveChanges();
+            });
         }
 
-        public Audio GetAudioByTitle(string title)
+        public IEnumerable<Audio> GetAllAudios()
         {
-            return _context.Set<Audio>().FirstOrDefault(a => a.Title == title);
+            return contentRepository.GetAll().OfType<Audio>().ToList();
         }
 
-        public List<Audio> GetAllAudios()
+        public Audio GetAudioById(int id)
         {
-            return _context.Set<Audio>().ToList();
+            var content = contentRepository.GetById(id);
+            var audios = GetAllAudios();
+
+            foreach (var audio in audios)
+            {
+                if (audio.ContentItemId == content.ContentItemId)
+                {
+                    return audio;
+                }
+            }
+            return null;
         }
     }
 }

@@ -1,11 +1,7 @@
 ﻿using BLL.ModelsService;
-using DAL;
 using DAL.DataModels;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL
 {
@@ -13,27 +9,34 @@ namespace BLL
     {
         public void AddVideo(string title, string format, int storageId, double duration, string resolution)
         {
-            var video = new Video()
+            Add(new Video
             {
                 Title = title,
                 Format = format,
                 StorageId = storageId,
                 Duration = duration,
                 Resolution = resolution
-            };
-
-            _context.Contents.Add(video);
-            _context.SaveChanges();
+            });
         }
 
-        public Video GetVideoByTitle(string title)
+        public IEnumerable<Video> GetAllVideos()
         {
-            return _context.Set<Video>().FirstOrDefault(b => b.Title == title);
+            return contentRepository.GetAll().OfType<Video>().ToList();
         }
 
-        public List<Video> GetAllVideos()
+        public Video GetVideoById(int id)
         {
-            return _context.Set<Video>().ToList();
+            var content = contentRepository.GetById(id);
+            var videos = GetAllVideos();
+
+            foreach (var video in videos)
+            {
+                if (video.ContentItemId == content.ContentItemId)
+                {
+                    return video;
+                }
+            }
+            return null;
         }
     }
 }

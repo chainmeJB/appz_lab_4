@@ -51,12 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContentRepository.cs" />
     <Compile Include="DataModels\Audio.cs" />
     <Compile Include="DataModels\Book.cs" />
     <Compile Include="DataModels\ContentItem.cs" />
     <Compile Include="DataModels\Document.cs" />
     <Compile Include="DataModels\Storage.cs" />
     <Compile Include="DataModels\Video.cs" />
+    <Compile Include="IRepository.cs" />
+    <Compile Include="StorageRepository.cs" />
     <Compile Include="LibraryContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

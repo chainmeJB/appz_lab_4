@@ -1,5 +1,4 @@
-﻿using DAL;
-using DAL.DataModels;
+﻿using DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +9,34 @@ namespace BLL.ModelsService
     {
         public void AddDocument(string title, string format, int storageId, DateTime creationDate, string filePath)
         {
-            var document = new Document()
+            Add(new Document
             {
                 Title = title,
                 Format = format,
                 StorageId = storageId,
                 CreationDate = creationDate,
                 FilePath = filePath
-            };
-
-            _context.Contents.Add(document);
-            _context.SaveChanges();
+            });
         }
 
-        public Document GetDocumentByTitle(string title)
+        public IEnumerable<Document> GetAllDocuments()
         {
-            return _context.Set<Document>().FirstOrDefault(d => d.Title == title);
+            return contentRepository.GetAll().OfType<Document>().ToList();
         }
 
-        public List<Document> GetAllDocuments()
+        public Document GetDocumentById(int id)
         {
-            return _context.Set<Document>().ToList();
+            var content = contentRepository.GetById(id);
+            var documents = GetAllDocuments();
+
+            foreach (var document in documents)
+            {
+                if (document.ContentItemId == content.ContentItemId)
+                {
+                    return document;
+                }
+            }
+            return null;
         }
     }
-
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BLL.Exceptions;
+﻿
 using DAL;
 using DAL.DataModels;
 
@@ -11,47 +6,34 @@ namespace BLL.ModelsService
 {
     public class ContentService
     {
-        protected readonly LibraryContext _context = new LibraryContext();
-        protected readonly StorageService storageService = new StorageService();
+        protected readonly IRepository<ContentItem> contentRepository;
 
-        public ContentItem GetContentByTitle(string title)
+        public ContentService()
         {
-            return _context.Contents.FirstOrDefault(b => b.Title == title);
+            this.contentRepository = new ContentRepository(new LibraryContext());
         }
 
-        public List<ContentItem> GetAllContents()
+        public ContentItem GetById(int id)
         {
-            return _context.Contents.ToList();
+            return contentRepository.GetById(id);
         }
 
-        public void UpdateContentStorage(string title, int storageId)
+        public void UpdateContent(ContentItem contentItem)
         {
-            var content = GetContentByTitle(title);
-            if (content == null)
-            {
-                throw new ContentNotFoundException();
-            }
-
-            var storage = storageService.GetAllStorages()
-                                         .FirstOrDefault(s => s.StorageId == storageId);
-            if (storage == null)
-            {
-                throw new StorageNotFoundException();
-            }
-
-            content.StorageId = storage.StorageId;
-            _context.SaveChanges();
+            contentRepository.Update(contentItem);
+            contentRepository.Save();
         }
 
-        public void DeleteContent(string title)
+        public void DeleteContent(int id)
         {
-            var content = GetContentByTitle(title);
-            if (content == null)
-            {
-                throw new ContentNotFoundException();
-            }
-            _context.Contents.Remove(content);
-            _context.SaveChanges();
+            contentRepository.Delete(id);
+            contentRepository.Save();
+        }
+
+        protected void Add(ContentItem item)
+        {
+            contentRepository.Insert(item);
+            contentRepository.Save();
         }
     }
 }

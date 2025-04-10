@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BLL.Exceptions;
+﻿using System.Collections.Generic;
 using DAL;
 using DAL.DataModels;
 
@@ -11,7 +6,11 @@ namespace BLL.ModelsService
 {
     public class StorageService
     {
-        private readonly LibraryContext _context = new LibraryContext();
+        private readonly IRepository<Storage> storageRepository;
+        public StorageService() 
+        {
+            this.storageRepository = new StorageRepository(new LibraryContext());
+        }
 
         public void AddStorage(string name, string address)
         {
@@ -20,42 +19,30 @@ namespace BLL.ModelsService
                 Name = name,
                 Address = address
             };
-            _context.Storages.Add(storage);
-            _context.SaveChanges();
+            storageRepository.Insert(storage);
+            storageRepository.Save();
         }
 
-        public Storage GetStorageByName(string name)
+        public Storage GetById(int id)
         {
-            return _context.Storages.FirstOrDefault(b => b.Name == name);
+            return storageRepository.GetById(id);
         }
 
-        public List<Storage> GetAllStorages()
+        public IEnumerable<Storage> GetAllStorages()
         {
-            return _context.Storages.ToList();
+            return storageRepository.GetAll();
         }
 
-        public void UpdateStorage(string name, string newName, string address)
+        public void UpdateStorage(Storage storage)
         {
-            var storage = GetStorageByName(name);
-            if (storage == null)
-            {
-                throw new StorageNotFoundException();
-            }
-
-            storage.Name = newName;
-            storage.Address = address;
-            _context.SaveChanges();
+            storageRepository.Update(storage);
+            storageRepository.Save();
         }
 
-        public void DeleteStorage(string name)
+        public void DeleteStorage(int id)
         {
-            var storage = GetStorageByName(name);
-            if (storage == null)
-            {
-                throw new StorageNotFoundException();
-            }
-            _context.Storages.Remove(storage);
-            _context.SaveChanges();
+            storageRepository.Delete(id);
+            storageRepository.Save();
         }
     }
 }
