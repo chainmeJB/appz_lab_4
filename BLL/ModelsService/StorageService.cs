@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BLL.Exceptions;
 using DAL;
 using DAL.DataModels;
 
@@ -6,11 +7,7 @@ namespace BLL.ModelsService
 {
     public class StorageService
     {
-        private readonly IRepository<Storage> storageRepository;
-        public StorageService() 
-        {
-            this.storageRepository = new StorageRepository(new LibraryContext());
-        }
+        private readonly UnitOfWork unitOfWork = new UnitOfWork();
 
         public void AddStorage(string name, string address)
         {
@@ -19,30 +16,35 @@ namespace BLL.ModelsService
                 Name = name,
                 Address = address
             };
-            storageRepository.Insert(storage);
-            storageRepository.Save();
+            unitOfWork.StorageRepository.Insert(storage);
+            unitOfWork.Save();
         }
 
-        public Storage GetById(int id)
+        public Storage GetByID(int id)
         {
-            return storageRepository.GetById(id);
+            var storage = unitOfWork.StorageRepository.GetByID(id);
+            if (storage == null)
+            {
+                throw new StorageNotFoundException();
+            }
+            return storage;
         }
 
         public IEnumerable<Storage> GetAllStorages()
         {
-            return storageRepository.GetAll();
+            return unitOfWork.StorageRepository.Get();
         }
 
         public void UpdateStorage(Storage storage)
         {
-            storageRepository.Update(storage);
-            storageRepository.Save();
+            unitOfWork.StorageRepository.Update(storage);
+            unitOfWork.Save();
         }
 
         public void DeleteStorage(int id)
         {
-            storageRepository.Delete(id);
-            storageRepository.Save();
+            unitOfWork.StorageRepository.Delete(id);
+            unitOfWork.Save();
         }
     }
 }

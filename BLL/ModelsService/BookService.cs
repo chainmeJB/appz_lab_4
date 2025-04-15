@@ -21,12 +21,12 @@ namespace BLL
 
         public IEnumerable<Book> GetAllBooks()
         {
-            return contentRepository.GetAll().OfType<Book>().ToList();
+            return unitOfWork.ContentRepository.Get().OfType<Book>().ToList();
         }
 
-        public Book GetBookById(int id)
+        public Book GetBookByID(int id)
         {
-            var content = contentRepository.GetById(id);
+            var content = GetByID(id);
             var books = GetAllBooks();
 
             foreach (var book in books)

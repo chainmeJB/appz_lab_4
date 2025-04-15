@@ -152,7 +152,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int storageId = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetById(storageId);
+                var storage = storageService.GetByID(storageId);
 
                 if (storage == null)
                 {
@@ -272,44 +272,28 @@ namespace appz_lab_4
                 switch (type)
                 {
                     case ContentType.Book:
-                        var book = bookService.GetBookById(id);
-                        if (book == null)
-                        {
-                            throw new ContentNotFoundException();
-                        }
+                        var book = bookService.GetBookByID(id);
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                             "Айді", "Назва", "Формат", "Сховище", "Адреса", "Автор", "Стор."));
                         Console.WriteLine(book);
                         break;
 
                     case ContentType.Video:
-                        var video = videoService.GetVideoById(id);
-                        if (video == null)
-                        {
-                            throw new ContentNotFoundException();
-                        }
+                        var video = videoService.GetVideoByID(id);
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                         "Айді", "Назва", "Формат", "Сховище", "Адреса", "Довжина", "Розширення"));
                         Console.WriteLine(video);
                         break;
 
                     case ContentType.Audio:
-                        var audio = audioService.GetAudioById(id);
-                        if (audio == null)
-                        {
-                            throw new ContentNotFoundException();
-                        }
+                        var audio = audioService.GetAudioByID(id);
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                         "Айді", "Назва", "Формат", "Сховище", "Адреса", "Бітрейт", "Канали"));
                         Console.WriteLine(audio);
                         break;
 
                     case ContentType.Document:
-                        var document = documentService.GetDocumentById(id);
-                        if (document == null)
-                        {
-                            throw new ContentNotFoundException();
-                        }
+                        var document = documentService.GetDocumentByID(id);
                         Console.WriteLine(string.Format("{0, -5} {1, -15} {2, -15} {3, -15} {4, -20} {5, -15} {6, -15}",
                         "Айді", "Назва", "Формат", "Сховище", "Адреса", "Дата створення", "Шлях до файлу"));
                         Console.WriteLine(document);
@@ -330,7 +314,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді контента: ");
                 int contentId = GetIntType(Console.ReadLine());
 
-                var content = contentService.GetById(contentId);
+                var content = contentService.GetByID(contentId);
                 if (content == null)
                 {
                     throw new ContentNotFoundException();
@@ -339,7 +323,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді нового сховища: ");
                 int storageId = GetIntType(Console.ReadLine());
 
-                var storage = contentService.GetById(storageId);
+                var storage = contentService.GetByID(storageId);
                 if (storage == null)
                 {
                     throw new StorageNotFoundException();
@@ -348,7 +332,6 @@ namespace appz_lab_4
                 content.StorageId = storageId;
                 contentService.UpdateContent(content);
                 Console.WriteLine("Сховище контента успішно оновлено");
-
             }
             catch (Exception ex)
             {
@@ -363,7 +346,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді контента: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var content = contentService.GetById(id);
+                var content = contentService.GetByID(id);
                 if (content == null)
                 {
                     throw new ContentNotFoundException();
@@ -410,7 +393,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetById(id);
+                var storage = storageService.GetByID(id);
 
                 if (storage == null)
                 {
@@ -433,7 +416,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetById(id);
+                var storage = storageService.GetByID(id);
                 if (storage == null)
                 {
                     throw new StorageNotFoundException();
@@ -461,7 +444,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetById(id);
+                var storage = storageService.GetByID(id);
                 if (storage == null)
                 {
                     throw new StorageNotFoundException();

@@ -21,12 +21,12 @@ namespace BLL.ModelsService
 
         public IEnumerable<Document> GetAllDocuments()
         {
-            return contentRepository.GetAll().OfType<Document>().ToList();
+            return unitOfWork.ContentRepository.Get().OfType<Document>().ToList();
         }
 
-        public Document GetDocumentById(int id)
+        public Document GetDocumentByID(int id)
         {
-            var content = contentRepository.GetById(id);
+            var content = GetByID(id);
             var documents = GetAllDocuments();
 
             foreach (var document in documents)

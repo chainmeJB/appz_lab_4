@@ -20,12 +20,12 @@ namespace BLL.ModelsService
 
         public IEnumerable<Audio> GetAllAudios()
         {
-            return contentRepository.GetAll().OfType<Audio>().ToList();
+            return unitOfWork.ContentRepository.Get().OfType<Audio>().ToList();
         }
 
-        public Audio GetAudioById(int id)
+        public Audio GetAudioByID(int id)
         {
-            var content = contentRepository.GetById(id);
+            var content = GetByID(id);
             var audios = GetAllAudios();
 
             foreach (var audio in audios)

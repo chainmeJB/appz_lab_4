@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="appz_lab_4.Program">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="appz_lab_4.UI">
+    <Position X="2.25" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="appz_lab_4.UI.ContentType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>UI.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AIQACIABAAAIAIAABQAEABEAAACAABAABCAIAgAAAAA=</HashCode>
+      <FileName>UI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.Exceptions.ContentNotFoundException">
+    <Position X="5.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.Exceptions.StorageNotFoundException">
+    <Position X="7.5" Y="1" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.ModelsService.AudioService">
+    <Position X="6.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.BookService">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.ModelsService.ContentService">
+    <Position X="7.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.ModelsService.DocumentService">
+    <Position X="9" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.ModelsService.StorageService">
+    <Position X="11.5" Y="3" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BLL.VideoService">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.DataModels.ContentItem">
+    <Position X="16.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.DataModels.Audio">
+    <Position X="14.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.DataModels.Book">
+    <Position X="15.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.DataModels.Document">
+    <Position X="18.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.DataModels.Storage">
+    <Position X="20.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.DataModels.Video">
+    <Position X="18.75" Y="1" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DAL.ContentRepository">
+    <Position X="15.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DAL.StorageRepository">
+    <Position X="17.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="DAL.IRepository&lt;T&gt;">
+    <Position X="16.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

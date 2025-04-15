@@ -21,12 +21,12 @@ namespace BLL
 
         public IEnumerable<Video> GetAllVideos()
         {
-            return contentRepository.GetAll().OfType<Video>().ToList();
+            return unitOfWork.ContentRepository.Get().OfType<Video>().ToList();
         }
 
-        public Video GetVideoById(int id)
+        public Video GetVideoByID(int id)
         {
-            var content = contentRepository.GetById(id);
+            var content = GetByID(id);
             var videos = GetAllVideos();
 
             foreach (var video in videos)
