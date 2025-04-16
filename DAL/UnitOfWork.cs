@@ -5,7 +5,7 @@ namespace DAL
 {
     public class UnitOfWork : IDisposable
     {
-        private LibraryContext context = new LibraryContext();
+        private readonly LibraryContext context = new LibraryContext();
         private GenericRepository<ContentItem> contentRepository;
         private GenericRepository<Storage> storageRepository;
 

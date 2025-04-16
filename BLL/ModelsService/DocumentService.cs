@@ -1,5 +1,6 @@
-﻿using DAL.DataModels;
-using System;
+﻿using AutoMapper;
+using BLL.DTO;
+using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,36 +8,22 @@ namespace BLL.ModelsService
 {
     public class DocumentService : ContentService
     {
-        public void AddDocument(string title, string format, int storageId, DateTime creationDate, string filePath)
+        public DocumentService(IMapper mapper) : base(mapper) { }
+        public void AddDocument(DocumentDto document)
         {
-            Add(new Document
-            {
-                Title = title,
-                Format = format,
-                StorageId = storageId,
-                CreationDate = creationDate,
-                FilePath = filePath
-            });
+            Add(document);
         }
 
-        public IEnumerable<Document> GetAllDocuments()
+        public IEnumerable<DocumentDto> GetAllDocuments()
         {
-            return unitOfWork.ContentRepository.Get().OfType<Document>().ToList();
+            var documents = unitOfWork.ContentRepository.Get().OfType<Document>().ToList();
+            return _mapper.Map<IEnumerable<DocumentDto>>(documents);
         }
 
-        public Document GetDocumentByID(int id)
+        public DocumentDto GetDocumentByID(int id)
         {
-            var content = GetByID(id);
-            var documents = GetAllDocuments();
-
-            foreach (var document in documents)
-            {
-                if (document.ContentItemId == content.ContentItemId)
-                {
-                    return document;
-                }
-            }
-            return null;
+            var contentDto = GetByID(id);
+            return GetAllDocuments().FirstOrDefault(doc => doc.ContentItemId == contentDto.ContentItemId);
         }
     }
 }

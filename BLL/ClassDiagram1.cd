@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BLL.DTO.AudioDto">
+    <Position X="16.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>DTO\AudioDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.DTO.BookDto">
+    <Position X="15.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTO\BookDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.DTO.ContentItemDto">
+    <Position X="17.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAEAAAAAAAAAAAAgAAAAABAAAAAAAAgA=</HashCode>
+      <FileName>DTO\ContentItemDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.DTO.DocumentDto">
+    <Position X="20.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>DTO\DocumentDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.DTO.LibraryProfile">
+    <Position X="13.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTO\LibraryProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.DTO.StorageDto">
+    <Position X="13.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAEAAAAAAQAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>DTO\StorageDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.DTO.VideoDto">
+    <Position X="19.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAEAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTO\VideoDto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.Exceptions.ContentNotFoundException">
+    <Position X="11.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\ContentNotFoundException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.Exceptions.StorageNotFoundException">
+    <Position X="13.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\StorageNotFoundException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.ModelsService.AudioService">
+    <Position X="6.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAQAACAAAAAAAAA=</HashCode>
+      <FileName>ModelsService\AudioService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.BookService">
+    <Position X="7.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAACAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>ModelsService\BookService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.ModelsService.ContentService">
+    <Position X="8.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAIAIAAAAABAACAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ModelsService\ContentService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.ModelsService.DocumentService">
+    <Position X="10.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>ModelsService\DocumentService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.ModelsService.StorageService">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACIAAAAAAAAAAgAABABCAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ModelsService\StorageService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BLL.VideoService">
+    <Position X="11" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAARAAAAAAAAAA=</HashCode>
+      <FileName>ModelsService\VideoService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

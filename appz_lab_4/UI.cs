@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using AutoMapper;
 using BLL;
+using BLL.DTO;
 using BLL.Exceptions;
 using BLL.ModelsService;
 
@@ -14,15 +16,22 @@ namespace appz_lab_4
         private readonly VideoService videoService;
         private readonly AudioService audioService;
         private readonly DocumentService documentService;
+        private readonly IMapper mapper;
 
         public UI()
         {
-            this.storageService = new StorageService();
-            this.bookService = new BookService();
-            this.videoService = new VideoService();
-            this.contentService = new ContentService();
-            this.documentService = new DocumentService();
-            this.audioService = new AudioService();
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddMaps(typeof(LibraryProfile).Assembly);
+            });
+            mapper = config.CreateMapper();
+
+            storageService = new StorageService(mapper);
+            bookService = new BookService(mapper);
+            videoService = new VideoService(mapper);
+            contentService = new ContentService(mapper);
+            documentService = new DocumentService(mapper);
+            audioService = new AudioService(mapper);
         }
 
         public void ShowUi()
@@ -168,7 +177,7 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть кількість сторінок: ");
                         int pageCount = GetIntType(Console.ReadLine());
 
-                        bookService.AddBook(title, format, storageId, author, pageCount);
+                        bookService.AddBook(new BookDto(title, format, storageId, author, pageCount));
                         Console.WriteLine("Книгу успішно додано");
                         break;
 
@@ -179,7 +188,7 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть розширення відео: ");
                         string resolution = Console.ReadLine();
 
-                        videoService.AddVideo(title, format, storageId, duration, resolution);
+                        videoService.AddVideo(new VideoDto(title, format, storageId, duration, resolution));
                         Console.WriteLine("Відео успішно додано");
                         break;
 
@@ -190,7 +199,7 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть кількість каналів аудіо: ");
                         int channels = GetIntType(Console.ReadLine());
 
-                        audioService.AddAudio(title, format, storageId, bitRate, channels);
+                        audioService.AddAudio(new AudioDto(title, format, storageId, bitRate, channels));
                         Console.WriteLine("Аудіо успішно додано");
                         break;
 
@@ -200,7 +209,7 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть шлях до файлу: ");
                         string filePath = Console.ReadLine();
 
-                        documentService.AddDocument(title, format, storageId, creationDate, filePath);
+                        documentService.AddDocument(new DocumentDto(title, format, storageId, creationDate, filePath));
                         Console.WriteLine("Документ успішно додано");
                         break;
                 }
@@ -370,7 +379,7 @@ namespace appz_lab_4
             Console.WriteLine("Введіть адресу: ");
             string address = Console.ReadLine();
 
-            storageService.AddStorage(name, address);
+            storageService.AddStorage(new StorageDto(name, address));
 
             Console.WriteLine("Сховище успішно додано");
         }
@@ -417,10 +426,6 @@ namespace appz_lab_4
                 int id = GetIntType(Console.ReadLine());
 
                 var storage = storageService.GetByID(id);
-                if (storage == null)
-                {
-                    throw new StorageNotFoundException();
-                }
 
                 Console.WriteLine("Введіть нову назву сховища: ");
                 storage.Name = Console.ReadLine();

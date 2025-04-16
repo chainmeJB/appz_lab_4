@@ -1,41 +1,29 @@
 ﻿using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
+using BLL.DTO;
+using AutoMapper;
 
 namespace BLL.ModelsService
 {
     public class AudioService : ContentService
     {
-        public void AddAudio(string title, string format, int storageId, int bitRate, int channels)
+        public AudioService(IMapper mapper) : base(mapper) { }
+        public void AddAudio(AudioDto audio)
         {
-            Add(new Audio
-            {
-                Title = title,
-                Format = format,
-                StorageId = storageId,
-                BitRate = bitRate,
-                Channels = channels
-            });
+            Add(audio);
         }
 
-        public IEnumerable<Audio> GetAllAudios()
+        public IEnumerable<AudioDto> GetAllAudios()
         {
-            return unitOfWork.ContentRepository.Get().OfType<Audio>().ToList();
+            var audios = unitOfWork.ContentRepository.Get().OfType<Audio>().ToList();
+            return _mapper.Map<IEnumerable<AudioDto>>(audios);
         }
 
-        public Audio GetAudioByID(int id)
+        public AudioDto GetAudioByID(int id)
         {
-            var content = GetByID(id);
-            var audios = GetAllAudios();
-
-            foreach (var audio in audios)
-            {
-                if (audio.ContentItemId == content.ContentItemId)
-                {
-                    return audio;
-                }
-            }
-            return null;
+            var contentDto = GetByID(id);
+            return GetAllAudios().FirstOrDefault(audio => audio.ContentItemId == contentDto.ContentItemId);
         }
     }
 }

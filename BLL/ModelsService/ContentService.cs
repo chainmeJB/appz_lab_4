@@ -1,4 +1,6 @@
-﻿using BLL.Exceptions;
+﻿using AutoMapper;
+using BLL.DTO;
+using BLL.Exceptions;
 using DAL;
 using DAL.DataModels;
 
@@ -6,21 +8,35 @@ namespace BLL.ModelsService
 {
     public class ContentService
     {
+        protected readonly IMapper _mapper;
         protected UnitOfWork unitOfWork = new UnitOfWork();
 
-        public ContentItem GetByID(int id)
+        public ContentService(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
+        public ContentItemDto GetByID(int id)
         {
             var content = unitOfWork.ContentRepository.GetByID(id);
             if (content == null)
             {
                 throw new ContentNotFoundException();
             }
-            return content;
+            var contentDto = _mapper.Map<ContentItemDto>(content);
+            return contentDto;
         }
 
-        public void UpdateContent(ContentItem contentItem)
+        public void UpdateContent(ContentItemDto itemDto)
         {
-            unitOfWork.ContentRepository.Update(contentItem);
+            var existing = unitOfWork.ContentRepository.GetByID(itemDto.ContentItemId);
+            if (existing == null)
+            {
+                throw new ContentNotFoundException();
+            }
+            _mapper.Map(itemDto, existing);
+
+            unitOfWork.ContentRepository.Update(existing);
             unitOfWork.Save();
         }
 
@@ -30,9 +46,10 @@ namespace BLL.ModelsService
             unitOfWork.Save();
         }
 
-        protected void Add(ContentItem item)
+        protected void Add(ContentItemDto item)
         {
-            unitOfWork.ContentRepository.Insert(item);
+            var content = _mapper.Map<ContentItem>(item);
+            unitOfWork.ContentRepository.Insert(content);
             unitOfWork.Save();
         }
     }

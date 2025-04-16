@@ -1,4 +1,6 @@
-﻿using BLL.ModelsService;
+﻿using AutoMapper;
+using BLL.DTO;
+using BLL.ModelsService;
 using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,36 +9,23 @@ namespace BLL
 {
     public class BookService : ContentService
     {
-        public void AddBook(string title, string format, int storageId, string author, int pageCount)
+        public BookService(IMapper mapper) : base(mapper) { }
+
+        public void AddBook(BookDto book)
         {
-            Add(new Book
-            {
-                Title = title,
-                Format = format,
-                StorageId = storageId,
-                Author = author,
-                PageCount = pageCount
-            });
+            Add(book);
         }
 
-        public IEnumerable<Book> GetAllBooks()
+        public IEnumerable<BookDto> GetAllBooks()
         {
-            return unitOfWork.ContentRepository.Get().OfType<Book>().ToList();
+            var books = unitOfWork.ContentRepository.Get().OfType<Book>().ToList();
+            return _mapper.Map<IEnumerable<BookDto>>(books);
         }
 
-        public Book GetBookByID(int id)
+        public BookDto GetBookByID(int id)
         {
-            var content = GetByID(id);
-            var books = GetAllBooks();
-
-            foreach (var book in books)
-            {
-                if (book.ContentItemId == content.ContentItemId)
-                {
-                    return book;
-                }
-            }
-            return null;
+            var contentDto = GetByID(id);
+            return GetAllBooks().FirstOrDefault(book => book.ContentItemId == contentDto.ContentItemId);
         }
     }
 }

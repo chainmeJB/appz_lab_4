@@ -1,4 +1,6 @@
-﻿using BLL.ModelsService;
+﻿using AutoMapper;
+using BLL.DTO;
+using BLL.ModelsService;
 using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,36 +9,22 @@ namespace BLL
 {
     public class VideoService : ContentService
     {
-        public void AddVideo(string title, string format, int storageId, double duration, string resolution)
+        public VideoService(IMapper mapper) : base(mapper) { }
+        public void AddVideo(VideoDto video)
         {
-            Add(new Video
-            {
-                Title = title,
-                Format = format,
-                StorageId = storageId,
-                Duration = duration,
-                Resolution = resolution
-            });
+            Add(video);
         }
 
-        public IEnumerable<Video> GetAllVideos()
+        public IEnumerable<VideoDto> GetAllVideos()
         {
-            return unitOfWork.ContentRepository.Get().OfType<Video>().ToList();
+            var videos = unitOfWork.ContentRepository.Get().OfType<Video>().ToList();
+            return _mapper.Map<IEnumerable<VideoDto>>(videos);
         }
 
-        public Video GetVideoByID(int id)
+        public VideoDto GetVideoByID(int id)
         {
-            var content = GetByID(id);
-            var videos = GetAllVideos();
-
-            foreach (var video in videos)
-            {
-                if (video.ContentItemId == content.ContentItemId)
-                {
-                    return video;
-                }
-            }
-            return null;
+            var contentDto = GetByID(id);
+            return GetAllVideos().FirstOrDefault(vid => vid.ContentItemId == contentDto.ContentItemId);
         }
     }
 }
