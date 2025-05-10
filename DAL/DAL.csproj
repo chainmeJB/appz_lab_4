@@ -58,6 +58,8 @@
     <Compile Include="DataModels\Storage.cs" />
     <Compile Include="DataModels\Video.cs" />
     <Compile Include="GenericRepository.cs" />
+    <Compile Include="IRepository.cs" />
+    <Compile Include="IUnitOfWork.cs" />
     <Compile Include="LibraryContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWork.cs" />

@@ -1,37 +1,34 @@
 ﻿using System;
 using System.Linq;
-using AutoMapper;
-using BLL;
 using BLL.DTO;
 using BLL.Exceptions;
-using BLL.ModelsService;
+using BLL.IModelServices;
 
 namespace appz_lab_4
 {
     internal class UI
     {
-        private readonly StorageService storageService;
-        private readonly ContentService contentService;
-        private readonly BookService bookService;
-        private readonly VideoService videoService;
-        private readonly AudioService audioService;
-        private readonly DocumentService documentService;
-        private readonly IMapper mapper;
+        private readonly IStorageService storageService;
+        private readonly IContentService contentService;
+        private readonly IBookService bookService;
+        private readonly IVideoService videoService;
+        private readonly IAudioService audioService;
+        private readonly IDocumentService documentService;
 
-        public UI()
+        public UI(
+            IContentService contentService,
+            IStorageService storageService,
+            IBookService bookService,
+            IAudioService audioService,
+            IDocumentService documentService,
+            IVideoService videoService)
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddMaps(typeof(LibraryProfile).Assembly);
-            });
-            mapper = config.CreateMapper();
-
-            storageService = new StorageService(mapper);
-            bookService = new BookService(mapper);
-            videoService = new VideoService(mapper);
-            contentService = new ContentService(mapper);
-            documentService = new DocumentService(mapper);
-            audioService = new AudioService(mapper);
+            this.contentService = contentService;
+            this.storageService = storageService;
+            this.bookService = bookService;
+            this.audioService = audioService;
+            this.documentService = documentService;
+            this.videoService = videoService;
         }
 
         public void ShowUi()
@@ -161,7 +158,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int storageId = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetByID(storageId);
+                var storage = storageService.GetStorage(storageId);
 
                 if (storage == null)
                 {
@@ -177,7 +174,15 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть кількість сторінок: ");
                         int pageCount = GetIntType(Console.ReadLine());
 
-                        bookService.AddBook(new BookDto(title, format, storageId, author, pageCount));
+                        bookService.AddBook(new BookDto
+                        {
+                            Title = title,
+                            Format = format,
+                            StorageId = storageId,
+                            Author = author,
+                            PageCount = pageCount
+                        });
+
                         Console.WriteLine("Книгу успішно додано");
                         break;
 
@@ -188,7 +193,15 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть розширення відео: ");
                         string resolution = Console.ReadLine();
 
-                        videoService.AddVideo(new VideoDto(title, format, storageId, duration, resolution));
+                        videoService.AddVideo(new VideoDto
+                        { 
+                            Title = title, 
+                            Format = format, 
+                            StorageId = storageId, 
+                            Duration = duration, 
+                            Resolution = resolution 
+                        });
+
                         Console.WriteLine("Відео успішно додано");
                         break;
 
@@ -199,7 +212,15 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть кількість каналів аудіо: ");
                         int channels = GetIntType(Console.ReadLine());
 
-                        audioService.AddAudio(new AudioDto(title, format, storageId, bitRate, channels));
+                        audioService.AddAudio(new AudioDto
+                        { 
+                            Title = title, 
+                            Format = format, 
+                            StorageId = storageId, 
+                            BitRate = bitRate, 
+                            Channels = channels 
+                        });
+
                         Console.WriteLine("Аудіо успішно додано");
                         break;
 
@@ -209,7 +230,15 @@ namespace appz_lab_4
                         Console.WriteLine("Введіть шлях до файлу: ");
                         string filePath = Console.ReadLine();
 
-                        documentService.AddDocument(new DocumentDto(title, format, storageId, creationDate, filePath));
+                        documentService.AddDocument(new DocumentDto
+                        { 
+                            Title = title, 
+                            Format = format, 
+                            StorageId = storageId, 
+                            CreationDate = creationDate, 
+                            FilePath = filePath 
+                        });
+
                         Console.WriteLine("Документ успішно додано");
                         break;
                 }
@@ -323,7 +352,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді контента: ");
                 int contentId = GetIntType(Console.ReadLine());
 
-                var content = contentService.GetByID(contentId);
+                var content = contentService.GetContent(contentId);
                 if (content == null)
                 {
                     throw new ContentNotFoundException();
@@ -332,7 +361,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді нового сховища: ");
                 int storageId = GetIntType(Console.ReadLine());
 
-                var storage = contentService.GetByID(storageId);
+                var storage = contentService.GetContent(storageId);
                 if (storage == null)
                 {
                     throw new StorageNotFoundException();
@@ -355,7 +384,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді контента: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var content = contentService.GetByID(id);
+                var content = contentService.GetContent(id);
                 if (content == null)
                 {
                     throw new ContentNotFoundException();
@@ -379,7 +408,11 @@ namespace appz_lab_4
             Console.WriteLine("Введіть адресу: ");
             string address = Console.ReadLine();
 
-            storageService.AddStorage(new StorageDto(name, address));
+            storageService.AddStorage(new StorageDto
+            {
+                Name = name,
+                Address = address
+            });
 
             Console.WriteLine("Сховище успішно додано");
         }
@@ -402,7 +435,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetByID(id);
+                var storage = storageService.GetStorage(id);
 
                 if (storage == null)
                 {
@@ -425,7 +458,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetByID(id);
+                var storage = storageService.GetStorage(id);
 
                 Console.WriteLine("Введіть нову назву сховища: ");
                 storage.Name = Console.ReadLine();
@@ -449,7 +482,7 @@ namespace appz_lab_4
                 Console.WriteLine("Введіть айді сховища: ");
                 int id = GetIntType(Console.ReadLine());
 
-                var storage = storageService.GetByID(id);
+                var storage = storageService.GetStorage(id);
                 if (storage == null)
                 {
                     throw new StorageNotFoundException();

@@ -3,27 +3,44 @@ using BLL.DTO;
 using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
+using DAL;
+using BLL.Exceptions;
+using BLL.IModelServices;
 
 namespace BLL.ModelsService
 {
-    public class DocumentService : ContentService
+    public class DocumentService : IDocumentService
     {
-        public DocumentService(IMapper mapper) : base(mapper) { }
+        private readonly IContentService _contentService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public DocumentService(IUnitOfWork unitOfWork, IContentService contentService, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _contentService = contentService;
+            _mapper = mapper;
+        }
+
         public void AddDocument(DocumentDto document)
         {
-            Add(document);
+            _contentService.AddContent(document);
         }
 
         public IEnumerable<DocumentDto> GetAllDocuments()
         {
-            var documents = unitOfWork.ContentRepository.Get().OfType<Document>().ToList();
+            var documents = _unitOfWork.ContentRepository.Get().OfType<Document>().ToList();
             return _mapper.Map<IEnumerable<DocumentDto>>(documents);
         }
 
         public DocumentDto GetDocumentByID(int id)
         {
-            var contentDto = GetByID(id);
-            return GetAllDocuments().FirstOrDefault(doc => doc.ContentItemId == contentDto.ContentItemId);
+            var content = _unitOfWork.ContentRepository.GetByID(id) as Document;
+            if (content == null)
+            {
+                throw new ContentNotFoundException();
+            }
+            return _mapper.Map<DocumentDto>(content);
         }
     }
 }

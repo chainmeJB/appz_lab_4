@@ -1,31 +1,47 @@
 ﻿using AutoMapper;
 using BLL.DTO;
+using BLL.Exceptions;
+using BLL.IModelServices;
 using BLL.ModelsService;
+using DAL;
 using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BLL
 {
-    public class BookService : ContentService
+    public class BookService : IBookService
     {
-        public BookService(IMapper mapper) : base(mapper) { }
+        private readonly IContentService _contentService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public BookService(IUnitOfWork unitOfWork, IContentService contentService, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _contentService = contentService;
+            _mapper = mapper;
+        }
 
         public void AddBook(BookDto book)
         {
-            Add(book);
+            _contentService.AddContent(book);
         }
 
         public IEnumerable<BookDto> GetAllBooks()
         {
-            var books = unitOfWork.ContentRepository.Get().OfType<Book>().ToList();
+            var books = _unitOfWork.ContentRepository.Get().OfType<Book>().ToList();
             return _mapper.Map<IEnumerable<BookDto>>(books);
         }
 
         public BookDto GetBookByID(int id)
         {
-            var contentDto = GetByID(id);
-            return GetAllBooks().FirstOrDefault(book => book.ContentItemId == contentDto.ContentItemId);
+            var content = _unitOfWork.ContentRepository.GetByID(id) as Book;
+            if (content == null)
+            {
+                throw new ContentNotFoundException();
+            }
+            return _mapper.Map<BookDto>(content);
         }
     }
 }

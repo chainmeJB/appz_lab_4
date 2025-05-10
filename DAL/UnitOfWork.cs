@@ -3,52 +3,44 @@ using System;
 
 namespace DAL
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private readonly LibraryContext context = new LibraryContext();
-        private GenericRepository<ContentItem> contentRepository;
-        private GenericRepository<Storage> storageRepository;
+        private readonly LibraryContext _context;
+        private IRepository<Storage> _storageRepository;
+        private IRepository<ContentItem> _contentRepository;
 
-        public GenericRepository<ContentItem> ContentRepository
+        public UnitOfWork()
+        {
+            _context = new LibraryContext();
+        }
+
+        public IRepository<Storage> StorageRepository
         {
             get
             {
-
-                if (this.contentRepository == null)
-                {
-                    this.contentRepository = new GenericRepository<ContentItem>(context);
-                }
-                return contentRepository;
+                return _storageRepository = new GenericRepository<Storage>(_context);
             }
         }
 
-        public GenericRepository<Storage> StorageRepository
+        public IRepository<ContentItem> ContentRepository
         {
             get
             {
-
-                if (this.storageRepository == null)
-                {
-                    this.storageRepository = new GenericRepository<Storage>(context);
-                }
-                return storageRepository;
+                return _contentRepository = new GenericRepository<ContentItem>(_context);
             }
         }
 
         public void Save()
         {
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         private bool disposed = false;
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this.disposed && disposing)
             {
-                if (disposing)
-                {
-                    context.Dispose();
-                }
+                _context.Dispose();
             }
             this.disposed = true;
         }

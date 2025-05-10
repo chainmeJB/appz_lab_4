@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace DAL
 {
-    public class GenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         internal LibraryContext context;
         internal DbSet<TEntity> dbSet;
@@ -17,32 +17,11 @@ namespace DAL
             this.dbSet = context.Set<TEntity>();
         }
 
-        public virtual IEnumerable<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "")
+        public virtual IEnumerable<TEntity> Get()
         {
             IQueryable<TEntity> query = dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return orderBy(query).AsNoTracking().ToList();
-            }
-            else
-            {
-                return query.AsNoTracking().ToList();
-            }
+            return query.AsNoTracking().ToList();
         }
 
         public virtual TEntity GetByID(object id)
@@ -70,9 +49,9 @@ namespace DAL
             dbSet.Remove(entityToDelete);
         }
 
-        public virtual void Update(TEntity entityToUpdate)
+        public virtual void Update(TEntity entity)
         {
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            context.Entry(entity).State = EntityState.Modified;
         }
     }
 }

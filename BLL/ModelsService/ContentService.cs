@@ -1,24 +1,26 @@
 ﻿using AutoMapper;
 using BLL.DTO;
 using BLL.Exceptions;
+using BLL.IModelServices;
 using DAL;
 using DAL.DataModels;
 
 namespace BLL.ModelsService
 {
-    public class ContentService
+    public class ContentService : IContentService
     {
-        protected readonly IMapper _mapper;
-        protected UnitOfWork unitOfWork = new UnitOfWork();
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ContentService(IMapper mapper)
+        public ContentService(IUnitOfWork unitOfWork, IMapper mapper)
         {
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public ContentItemDto GetByID(int id)
+        public ContentItemDto GetContent(int id)
         {
-            var content = unitOfWork.ContentRepository.GetByID(id);
+            var content = _unitOfWork.ContentRepository.GetByID(id);
             if (content == null)
             {
                 throw new ContentNotFoundException();
@@ -27,30 +29,35 @@ namespace BLL.ModelsService
             return contentDto;
         }
 
-        public void UpdateContent(ContentItemDto itemDto)
+        public void UpdateContent(ContentItemDto item)
         {
-            var existing = unitOfWork.ContentRepository.GetByID(itemDto.ContentItemId);
+            var existing = _unitOfWork.ContentRepository.GetByID(item.ContentItemId);
             if (existing == null)
             {
                 throw new ContentNotFoundException();
             }
-            _mapper.Map(itemDto, existing);
+            _mapper.Map(item, existing);
 
-            unitOfWork.ContentRepository.Update(existing);
-            unitOfWork.Save();
+            _unitOfWork.ContentRepository.Update(existing);
+            _unitOfWork.Save();
         }
 
         public void DeleteContent(int id)
         {
-            unitOfWork.ContentRepository.Delete(id);
-            unitOfWork.Save();
+            var existing = _unitOfWork.ContentRepository.GetByID(id);
+            if (existing == null)
+            {
+                throw new ContentNotFoundException();
+            }
+            _unitOfWork.ContentRepository.Delete(id);
+            _unitOfWork.Save();
         }
 
-        protected void Add(ContentItemDto item)
+        public void AddContent(ContentItemDto item)
         {
             var content = _mapper.Map<ContentItem>(item);
-            unitOfWork.ContentRepository.Insert(content);
-            unitOfWork.Save();
+            _unitOfWork.ContentRepository.Insert(content);
+            _unitOfWork.Save();
         }
     }
 }

@@ -4,27 +4,43 @@ using BLL.ModelsService;
 using DAL.DataModels;
 using System.Collections.Generic;
 using System.Linq;
+using DAL;
+using BLL.Exceptions;
+using BLL.IModelServices;
 
 namespace BLL
 {
-    public class VideoService : ContentService
+    public class VideoService : IVideoService
     {
-        public VideoService(IMapper mapper) : base(mapper) { }
+        private readonly IContentService _contentService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public VideoService(IUnitOfWork unitOfWork, IContentService contentService, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _contentService = contentService;
+            _mapper = mapper;
+        }
         public void AddVideo(VideoDto video)
         {
-            Add(video);
+            _contentService.AddContent(video);
         }
 
         public IEnumerable<VideoDto> GetAllVideos()
         {
-            var videos = unitOfWork.ContentRepository.Get().OfType<Video>().ToList();
+            var videos = _unitOfWork.ContentRepository.Get().OfType<Video>().ToList();
             return _mapper.Map<IEnumerable<VideoDto>>(videos);
         }
 
         public VideoDto GetVideoByID(int id)
         {
-            var contentDto = GetByID(id);
-            return GetAllVideos().FirstOrDefault(vid => vid.ContentItemId == contentDto.ContentItemId);
+            var content = _unitOfWork.ContentRepository.GetByID(id) as Video;
+            if (content == null)
+            {
+                throw new ContentNotFoundException();
+            }
+            return _mapper.Map<VideoDto>(content);
         }
     }
 }

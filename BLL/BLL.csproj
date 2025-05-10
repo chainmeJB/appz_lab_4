@@ -43,6 +43,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.HashCode.6.0.0\lib\net462\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -63,6 +66,12 @@
     <Compile Include="DTO\VideoDto.cs" />
     <Compile Include="Exceptions\ContentNotFoundException.cs" />
     <Compile Include="Exceptions\StorageNotFoundException.cs" />
+    <Compile Include="IModelServices\IAudioService.cs" />
+    <Compile Include="IModelServices\IBookService.cs" />
+    <Compile Include="IModelServices\IContentService.cs" />
+    <Compile Include="IModelServices\IDocumentService.cs" />
+    <Compile Include="IModelServices\IStorageService.cs" />
+    <Compile Include="IModelServices\IVideoService.cs" />
     <Compile Include="ModelsService\AudioService.cs" />
     <Compile Include="ModelsService\BookService.cs" />
     <Compile Include="ModelsService\ContentService.cs" />

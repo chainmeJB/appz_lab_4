@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace BLL.DTO
 {
     public abstract class ContentItemDto
@@ -9,5 +10,6 @@ namespace BLL.DTO
 
         public int StorageId { get; set; }
         public virtual StorageDto Storage { get; set; }
+
     }
 }
